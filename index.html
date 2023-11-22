@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>eCommerce App</title>
+</head>
+<style>
+  *{
+    margin: 0;
+    padding: 0;
+  }
+  .app{
+    background: cyan;
+    width: 99%;
+    min-width: 360px;
+    max-width: 720px;
+    margin: 1px auto;
+
+  }
+  .products{
+    background: gray;
+  }
+  .cart{
+    background: pink;
+  }
+  .pad{
+    padding: 9px;
+  }
+  .mar{
+    margin: 9px auto;
+  }
+  .wid{
+    min-width: 360px;
+    max-width: 600px;
+    width: 75%;
+  }
+  .head{
+    border: 1px solid gray;
+    width: 90%;
+    text-align: center;
+  }
+  .foot{
+    border: 1px solid gray;
+    width: 90%;
+    text-align: center;
+  }
+
+</style>
+<body>
+  <div class="app">
+    <div class="head ">
+      <h1>eCommerce App</h1>
+    </div>
+    
+    <div class="products pad mar wid">
+      <h2>Productos</h2>
+      <ul id="productList"></ul>
+    </div>
+
+    <div class="cart pad mar wid">
+      <h2>Carrito de Compras</h2>
+      <ul id="cartList"></ul>
+      <p>Total: $<span id="totalAmount">0.00</span></p>
+      <button onclick="checkout()">Hacer Pedido</button>
+    </div>
+
+    <div class="foot">
+      <p>Derechos Reservados</p>
+    </div>
+
+    <script>
+      // Base de datos de productos (puede ser reemplazada por una llamada a una API)
+      const productsDatabase = [
+        { id: 1, name: 'Producto 1', price: 10.00 },
+        { id: 2, name: 'Producto 2', price: 20.00 },
+        { id: 3, name: 'Producto 3', price: 30.00 }
+      ];
+
+      // Función para obtener el carrito desde el almacenamiento local
+      function getCart() {
+        const cartString = localStorage.getItem('cart');
+        return cartString ? JSON.parse(cartString) : [];
+      }
+
+      // Función para mostrar los productos en la interfaz de usuario
+      function displayProducts() {
+        const productList = document.getElementById('productList');
+
+        productsDatabase.forEach(product => {
+          const li = document.createElement('li');
+          li.textContent = `${product.name} - $${product.price.toFixed(2)}`;
+
+          // Botón para agregar al carrito
+          const addButton = document.createElement('button');
+          addButton.textContent = 'Agregar';
+          addButton.onclick = () => addToCart(product);
+
+          li.appendChild(addButton);
+          productList.appendChild(li);
+        });
+      }
+
+      // Función para mostrar el carrito en la interfaz de usuario
+      function displayCart() {
+        const cartList = document.getElementById('cartList');
+        const totalAmountElement = document.getElementById('totalAmount');
+
+        cartList.innerHTML = '';
+        const cart = getCart();
+        let totalAmount = 0;
+
+        cart.forEach(item => {
+          const li = document.createElement('li');
+          li.textContent = `${item.name} - $${item.price.toFixed(2)}`;
+
+          // Botón para quitar del carrito
+          const removeButton = document.createElement('button');
+          removeButton.textContent = 'Quitar del Carrito';
+          removeButton.onclick = () => removeFromCart(item.id);
+
+          li.appendChild(removeButton);
+          cartList.appendChild(li);
+
+          totalAmount += item.price;
+        });
+
+        totalAmountElement.textContent = totalAmount.toFixed(2);
+      }
+
+      // Función para agregar un producto al carrito
+      function addToCart(product) {
+        const cart = getCart();
+        cart.push({ id: product.id, name: product.name, price: product.price });
+        localStorage.setItem('cart', JSON.stringify(cart));
+        displayCart();
+      }
+
+      // Función para quitar un producto del carrito
+      function removeFromCart(productId) {
+        const cart = getCart();
+        const updatedCart = cart.filter(item => item.id !== productId);
+        localStorage.setItem('cart', JSON.stringify(updatedCart));
+        displayCart();
+      }
+
+      // Función para procesar el pago (simulación)
+      function checkout() {
+        alert('Compra realizada. Gracias por comprar con nosotros.');
+        localStorage.removeItem('cart');
+        displayCart();
+      }
+
+      // Mostrar los productos al cargar la página
+      displayProducts();
+      // Mostrar el carrito al cargar la página
+      displayCart();
+    </script>
+  </div>
+</body>
+</html>
